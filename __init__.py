@@ -6,3 +6,6 @@ __version__ = "1.0.0"
 __maintainer__ = "Zach Dischner"
 __email__ = "zach.dischner@gmail.com"
 __status__ = "Dev"
+"""
+	@brief init file for ZD-Utils modules
+"""
