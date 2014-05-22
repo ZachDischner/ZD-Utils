@@ -1,0 +1,4 @@
+*.pyc
+Doxy*
+doc/*
+doc
