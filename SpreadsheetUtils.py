@@ -85,7 +85,8 @@ def import_csv(fname, no_spaces=True):
 def mask(dataframe, key, value):
     """@brief This function masks a dataframe, given a key-value pair
 
-    Key/Value pair can be a string, or number. Logic handles both 
+    Key/Value pair can be a string, or number. Logic handles both. 
+    Logic reads like: 'Return a dataframe subset of the original dataframe where the dataframe.key == value' 
     NOTE that this works based on string.contains, not exact comparison. Take this into account   
 
     @param [dataframe: Pandas dataframe]  a pandas dataframe 
@@ -99,7 +100,7 @@ def mask(dataframe, key, value):
     """
     
     if type(key) == str:
-        return df.loc[(df[key]).apply(string.upper).str.contains()]
+        return df.loc[(df[key]).apply(string.upper).str.contains(value)]
 
     return dataframe[dataframe[key] == value]
 
