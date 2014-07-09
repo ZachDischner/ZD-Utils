@@ -30,6 +30,7 @@ Have fun!
 import pandas as pd
 import sys as sys
 import numpy as np
+import string
 
 # ------------
 # --- import_excel ---
@@ -105,12 +106,16 @@ def mask(dataframe, key, value):
     Returns:
         data:   Masked pandas data frame
 
+    Todos:
+        Refactor with a new match_condition() function or something that does this:
+            return True in [fnmatch.fnmatch(alice.COMMAND.iloc[0],match_key) for match_key in start_condition]
+
     Example:
         data = mask(full_dataframe,"CMD_NAME","On")
     """
     
     if type(key) == str:
-        return df.loc[(df[key]).apply(string.upper).str.contains(value)]
+        return dataframe.loc[(dataframe[key]).apply(string.upper).str.contains(value)]
 
     return dataframe[dataframe[key] == value]
 
