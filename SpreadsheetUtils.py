@@ -21,7 +21,8 @@ user.
 
 Have fun! 
 
-@todos None for now!  Might want to make this into a class that wraps a dataframe. IDK.
+Todos:
+     None for now!  Might want to make this into a class that wraps a dataframe. IDK.
 """
 
 # -------------------------
@@ -30,7 +31,7 @@ Have fun!
 import pandas as pd
 import sys as sys
 import numpy as np
-import string
+import stringlksjd
 
 # ------------
 # --- import_excel ---
