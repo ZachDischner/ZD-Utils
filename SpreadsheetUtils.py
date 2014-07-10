@@ -31,7 +31,7 @@ Todos:
 import pandas as pd
 import sys as sys
 import numpy as np
-import stringlksjd
+import string
 
 # ------------
 # --- import_excel ---
