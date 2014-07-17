@@ -168,3 +168,47 @@ def reformat_column_names(dataframe, replace_this=" ", with_this="_"):
     dataframe.columns = [col.replace(replace_this, with_this) for col in dataframe.columns]
     return dataframe
 
+def saveDataFrame(dataframe, savedir='Output/', filenameNoExt="DataframeData", to_csv=True, to_html=False, to_Excel=False):
+    """Saves dataframes in a variety of formats. 
+
+    Save single dataframe as csv or HTML, or pass in a dictionary of dataframes to put all dataframes into an
+    Excel file with each frame on a different sheet.
+
+    Args:
+        dataframe:  Dataframe datastructures
+
+    Kwargs:
+        savedir:        Locally referenced file to place output files in
+        filenameNoExt:  Template filename. I.E. 'myresults', not 'myresults.xlsx'
+        to_csv:         Save data to csv file
+        to_html:        Save data to html file, opens as a table in your browser
+        to_Excel:       Save to excel spreadsheet (ick)
+
+
+    Examples:
+        df1=pd.DataFrame({'a':['foo','bar'],'b':['sarah','ryan']})
+        df2=pd.DataFrame({'c':[99,100],'d':[4444444,-2]})
+        df_dict = dict{'foo':df1, 'bar':df2}
+        saveDataFrame(df_dict,to_Excel=True,to_csv=False,filenameNoExt='myfile')
+        saveDataFrame(df1,to_csv=True,to_html=True,filenameNoExt='df1')
+    """
+    if to_Excel:
+        writer=pd.ExcelWriter(savedir+filenameNoExt + ".xlsx")
+        if type(dataframe) is pd.DataFrame: ## I'd Rather you passed in a dictionary...
+            dataframe.to_excel(writer,'Sheet1')
+        elif type(dataframe) is dict:
+            [dataframe[sheetname].to_excel(writer,sheetname) for idx,sheetname in enumerate(dataframe)]
+            writer.close()
+        else:
+            raise Warning("Unknown datatype bro!")
+
+    if to_csv:
+        if type(dataframe) is not pd.DataFrame:
+            raise Warning("ERROR must pass a dataframe for saving not: " + str(type(dataframe)))
+        dataframe.to_csv(savedir+filenameNoExt+".csv")
+
+    if to_html:
+        if type(dataframe) is not pd.DataFrame:
+            raise Warning("ERROR must pass a dataframe for saving not: " + str(type(dataframe)))
+        dataframe.to_html(savedir+filenameNoExt+".html")
+
