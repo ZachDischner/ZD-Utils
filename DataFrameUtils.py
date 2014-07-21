@@ -215,7 +215,8 @@ def saveDataFrame(dataframe, savedir='Output/', filenameNoExt="DataframeData", t
         dataframe.to_html(savedir+filenameNoExt+".html")
 
 
-def DataFrame2DygraphsJS(df, div=None,col_for_x_axis=None):
+def DataFrame2DygraphsJS(df, col_for_x_axis, div=None,colors=None):
+    # colors = ["red",'green','blue']
 
     """SUPER UNTESTED WORK IN PROGRESS
     give div name if you already have a div made...?"""
@@ -225,23 +226,22 @@ def DataFrame2DygraphsJS(df, div=None,col_for_x_axis=None):
     """
     if div is None:
         divname = "graphdiv"
-        dygraphs += """<div id="graphdiv" style="width: auto; height: 400px;"></div>"""
+    else:
+        divname = div
+
+    ##HMMMM Think about this. Should we always provide a div? Or make an option to use an outside div?
+    dygraphs += """<div id='"""+divname+"""' style="width: auto; height: 400px;"></div>""" 
 
     dygraphs += """
     <script type="text/javascript">
     function convertToDataTable(d) {
       var columns = _.keys(d);
-      //document.write(columns);
-      """
-
-    if col_for_x_axis is not None:
-        dygraphs += """columns.splice(columns.indexOf('""" + col_for_x_axis +"""'), 1);  // Get index column. (prob index). Don't need to do this just to plot all """ 
-    
-    dygraphs += """ 
+      var x_col = '""" + col_for_x_axis +"""';
+      columns.splice(columns.indexOf(x_col), 1);  // Get index column. (prob index). Don't need to do this just to plot all
       var out = [];
       var i = 0;
-      for (var k in d['x']) {
-        var row = [d['x'][k]];
+      for (var k in d[x_col]) {
+        var row = [d[x_col][k]];
         columns.forEach(function(col) {
           row.push(d[col][k]);
           i=i+0.01;
@@ -249,12 +249,7 @@ def DataFrame2DygraphsJS(df, div=None,col_for_x_axis=None):
         });
         out.push(row);
       }
-      return {data:out, labels:['x'].concat(columns)};
-    }
-
-    function indexGetter(i)
-    {
-        $('div#status').width(i);
+      return {data:out, labels:[x_col].concat(columns)};
     }
 
     function handle_output(out) {
@@ -267,7 +262,11 @@ def DataFrame2DygraphsJS(df, div=None,col_for_x_axis=None):
         labels: tabular.labels,
         rollPeriod: 1,
         showRoller: true,
-        colors: ["red","blue"],
+        """
+    if colors:
+        dygraphs+= """colors: ["""+string.join(['"'+c+'"' for c in colors],',')+"],"""
+
+    dygraphs+="""
         errorBars: false
       })
     }
