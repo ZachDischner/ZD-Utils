@@ -64,14 +64,16 @@ def import_excel(fname, sheetname='PDIR_CMD',no_spaces=True):
 # ------------
 # --- import_csv ---
 # ------------
-def import_csv(fname, no_spaces=True):
+def import_csv(fname, no_spaces=True, header=1, column_names=None):
     """This function parses a CMD spreadsheet formatted as Excel spreadsheet.
 
     Args:
         fname:  String with filename and path of excel spreadsheet to open
 
     Kwargs:
-        no_spaces:  Boolean indicator to remove spaces and fill with '_'
+        no_spaces:      Boolean indicator to remove spaces and fill with '_'
+        header:         Rows to treat as header information, and therefore ignore
+        column_names:   Names of data columns. 
     
     Returns:
         data:   Pandas data frame
@@ -79,7 +81,7 @@ def import_csv(fname, no_spaces=True):
     Example:
         data = import_csv("CMD_FILES/cmd_Jan_01_2001.csv")\endcode
     """
-    data = pd.read_csv(fname, header=1)
+    data = pd.read_csv(fname, header=header, names=column_names)
     # Reformat column indices to replace spaces with underscores
     if no_spaces is True:
         data = reformat_column_names(data)
@@ -211,4 +213,104 @@ def saveDataFrame(dataframe, savedir='Output/', filenameNoExt="DataframeData", t
         if type(dataframe) is not pd.DataFrame:
             raise Warning("ERROR must pass a dataframe for saving not: " + str(type(dataframe)))
         dataframe.to_html(savedir+filenameNoExt+".html")
+
+
+def DataFrame2DygraphsJS(df, div=None,col_for_x_axis=None):
+
+    """SUPER UNTESTED WORK IN PROGRESS
+    give div name if you already have a div made...?"""
+    dfj = df.to_json()
+    dygraphs = """
+    <script src="http://dygraphs.com/dygraph-combined.js"></script>
+    """
+    if div is None:
+        divname = "graphdiv"
+        dygraphs += """<div id="graphdiv" style="width: auto; height: 400px;"></div>"""
+
+    dygraphs += """
+    <script type="text/javascript">
+    function convertToDataTable(d) {
+      var columns = _.keys(d);
+      //document.write(columns);
+      """
+
+    if col_for_x_axis is not None:
+        dygraphs += """columns.splice(columns.indexOf('""" + col_for_x_axis +"""'), 1);  // Get index column. (prob index). Don't need to do this just to plot all """ 
+    
+    dygraphs += """ 
+      var out = [];
+      var i = 0;
+      for (var k in d['x']) {
+        var row = [d['x'][k]];
+        columns.forEach(function(col) {
+          row.push(d[col][k]);
+          i=i+0.01;
+          indexGetter(i);
+        });
+        out.push(row);
+      }
+      return {data:out, labels:['x'].concat(columns)};
+    }
+
+    function indexGetter(i)
+    {
+        $('div#status').width(i);
+    }
+
+    function handle_output(out) {
+      var json = out.content.data['text/plain'];
+      var data = JSON.parse(eval(json));
+      var tabular = convertToDataTable(data);
+      """
+    dygraphs += """g = new Dygraph(document.getElementById('""" + divname + """'), tabular.data, {
+        legend: 'always',
+        labels: tabular.labels,
+        rollPeriod: 1,
+        showRoller: true,
+        colors: ["red","blue"],
+        errorBars: false
+      })
+    }
+    var kernel = IPython.notebook.kernel;
+    var callbacks = { 'iopub' : {'output' : handle_output}};
+    kernel.execute("dfj", callbacks, {silent:false});
+    </script>
+    """
+    return dfj, dygraphs
+
+
+def DataFrame2DygraphsStatic(df):
+    """SUPER SUPER IN DEVELOPMENT!!!"""
+    s=df.to_csv(index_label="Index",float_format="%5f",index=True)
+    ss=string.join(['"' + x +'\\n"' for x in s.split('\n')],'+\n')
+    dygraph_str="""
+    <html>
+    <head>
+    <script type="text/javascript" src="http://dygraphs.com/1.0.1/dygraph-combined.js"></script>
+    </head>
+    <body>
+    <div id="graphdiv5" style="margin: 0 auto; width:auto;"></div>
+    <script type="text/javascript">
+      g = new Dygraph(
+            document.getElementById("graphdiv5"),  // containing div
+            """ + ss[:-6] + """,
+            {
+                legend: 'always',
+                title: 'FOO vs. BAR',
+                rollPeriod: 1,
+                showRoller: true,
+                errorBars: false,
+                ylabel: 'Temperature (Stuff)'
+            }
+          );
+    </script>
+    """
+    return dygraph_str
+
+
+
+
+
+
+
 
