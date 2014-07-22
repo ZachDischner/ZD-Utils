@@ -244,8 +244,6 @@ def DataFrame2DygraphsJS(df, col_for_x_axis, div=None,colors=None):
         var row = [d[x_col][k]];
         columns.forEach(function(col) {
           row.push(d[col][k]);
-          i=i+0.01;
-          indexGetter(i);
         });
         out.push(row);
       }

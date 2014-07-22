@@ -10,7 +10,8 @@ ZD-Utils
 
 **Dependancies:** These dependancies are listed as standard Ubuntu linux package names that can be installed via "apt-get", "pip", or maybe "homebrew":
 
-python-numpy python-scipy ipython ipython-notebook python-pandas python-sympy python-nose python-mpltoolkits.basemap python-pygments python-sphinx doxygen
+python-numpy python-scipy ipython ipython-notebook pandas>=0.14.1 python-sympy python-nose python-mpltoolkits.basemap python-pygments python-sphinx doxygen
+
 
 ========= 
 
