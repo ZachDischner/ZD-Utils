@@ -250,7 +250,7 @@ def DataFrame2DygraphsJS(df, col_for_x_axis, div=None,colors=None):
       return {data:out, labels:[x_col].concat(columns)};
     }
 
-    function handle_output(out) {
+    function handle_output_""" + divname + """(out) {
       var json = out.content.data['text/plain'];
       var data = JSON.parse(eval(json));
       var tabular = convertToDataTable(data);
@@ -269,7 +269,7 @@ def DataFrame2DygraphsJS(df, col_for_x_axis, div=None,colors=None):
       })
     }
     var kernel = IPython.notebook.kernel;
-    var callbacks = { 'iopub' : {'output' : handle_output}};
+    var callbacks = { 'iopub' : {'output' : handle_output_""" + divname + """}};
     kernel.execute("dfj", callbacks, {silent:false});
     </script>
     """
