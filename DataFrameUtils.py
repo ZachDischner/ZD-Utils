@@ -122,6 +122,25 @@ def mask(dataframe, key, value):
 
     return dataframe[dataframe[key] == value]
 
+def colmask(dataframe, list_of_column_names):
+    """Super simple, just returns a dataframe composed of certain columns contained within the original  
+
+    Args:
+        dataframe:      Pandas Dataframe to apply the mask on
+        list_of_column_names:   List of string column names
+    
+    Returns:
+        data:   Masked pandas data frame
+
+    Todos:
+
+    Example:
+        things_to_plot = ['Loop Iter','Az Motion','Az Residuals']
+        df1 = colmask(dataframe, things_to_plot)
+    """
+    return dataframe.loc[:,list_of_column_names]
+
+
 # ------------
 # --- drop_columns ---
 # ------------
