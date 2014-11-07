@@ -119,10 +119,11 @@ def mask(dataframe, key, value, exact=True):
 
     Example:
         data = mask(full_dataframe,"CMD_NAME","On")
+        data = mask(full_dataframe,"CMD_LIST","INSTRUMENT_*_POWER", exact=False)
     """
     
     if type(key) == str:
-        if exact is True:
+        if exact is False:
             return dataframe.loc[ [fnmatch(DF,value) for DF in dataframe[key]] ]
         return dataframe.loc[(dataframe[key]).apply(string.upper).str.contains(value)]
 
