@@ -32,6 +32,7 @@ import pandas as pd
 import sys as sys
 import numpy as np
 import string
+from fnmatch import fnmatch
 
 # ------------
 # --- import_excel ---
@@ -94,7 +95,7 @@ def import_csv(fname, no_spaces=True, header=1, column_names=None):
 # ------------
 # --- mask ---
 # ------------
-def mask(dataframe, key, value):
+def mask(dataframe, key, value, exact=True):
     """This function masks a dataframe, given a key-value pair
 
     Key/Value pair can be a string, or number. Logic handles both. 
@@ -105,6 +106,9 @@ def mask(dataframe, key, value):
         dataframe:      Pandas Dataframe to apply the mask on
         key:            "key" accessing dataframe columns
         value:          (string or numeric) the value you wish to mask by dataframe[key]
+
+    Kwargs:
+        exact:          For string comparisions, specify if the match must be exact or if you want wildcards. 
     
     Returns:
         data:   Masked pandas data frame
@@ -118,7 +122,10 @@ def mask(dataframe, key, value):
     """
     
     if type(key) == str:
+        if exact is True:
+            return dataframe.loc[ [fnmatch(DF,value) for DF in dataframe[key]] ]
         return dataframe.loc[(dataframe[key]).apply(string.upper).str.contains(value)]
+
 
     return dataframe[dataframe[key] == value]
 
